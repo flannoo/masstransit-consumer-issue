@@ -1,0 +1,28 @@
+﻿services:
+  rabbitmq:
+    container_name: rabbitmq
+    image: masstransit/rabbitmq
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    networks:
+      - backend
+  masstransit.rabbitmq.test:
+    image: masstransit.rabbitmq.test
+    build:
+      context: .
+      dockerfile: MassTransit.RabbitMq.Test/Dockerfile
+    environment:
+      - RABBITMQ__HOST=rabbitmq
+      - RABBITMQ__USERNAME=guest
+      - RABBITMQ__PASSWORD=guest
+    depends_on:
+      rabbitmq:
+        condition: service_started
+    networks:
+      - backend
+
+networks:
+  backend: {
+    driver: bridge
+  }
